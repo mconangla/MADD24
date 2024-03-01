@@ -6,7 +6,7 @@ The following files include, on one hand, codes that can be used separately to t
 
 # Codes. Components alone
 ## MADD_IAQ_CLOCK_setup.ino
-This pcode is used to initialize the clock module, set its parameters such as time format, time zone, and any other necessary settings.
+This code is used to initialize the clock module, set its parameters such as time format, time zone, and any other necessary settings.
 
 ## MADD-IAQ_PMSA003_alone.ino
 This code measures the concentration of airborne particulate matter, including PM1.0, PM2.5, and PM10 particles
@@ -15,7 +15,7 @@ This code measures the concentration of airborne particulate matter, including P
 This code is used to measure carbon dioxide (CO2) concentration in the air, as well as temperature and humidity. 
 
 ## MADD_IAQ_SD_card.ino
-This program is responsible for saving and reading data to and from an SD card.
+This code is responsible for saving and reading data to and from an SD card.
 
 # Codes. Components combination
 ## MADD-IAQ_SENSORS_ThingSpeak.ino
