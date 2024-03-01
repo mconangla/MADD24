@@ -21,6 +21,9 @@ This code is responsible for saving and reading data to and from an SD card.
 ## MADD-IAQ_SENSORS_ThingSpeak.ino
 Reads data from PM25 and SCD41 sensors at specified intervals using WiFi. The gathered data is then uploaded to a personalized channel in ThingSpeak.
 
+## MADD-IAQ_SENSORS_Blynk.ino
+Reads data from PM25 and SCD41 sensors at specified intervals using WiFi. The gathered data is then uploaded to a personalized dashboard in Blynk.
+
 ## MADD-IAQ_SENSORS_SD_card.ino
 Reads data from PM25 and SCD41 sensors at specified intervals, as well as the current date and time from the clock module. The gathered data is then stored in a data.csv file.
 
