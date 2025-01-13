@@ -11,7 +11,7 @@ unsigned long interval = 20000;
 ///// PM25 Libraries ///// - Adafruit PM25 AQI
 #include "Adafruit_PM25AQI.h"
 #include <SoftwareSerial.h>
-SoftwareSerial pmSerial(2, 3);
+SoftwareSerial pmSerial(14, 12);
 Adafruit_PM25AQI aqi = Adafruit_PM25AQI();
 PM25_AQI_Data data;
 
