@@ -7,8 +7,8 @@
 // pin #2 is IN from sensor (TX pin on sensor), leave pin #3 disconnected
 // comment these two lines if using hardware serial
 #include <SoftwareSerial.h>
-const int sensorRxPin = 2;
-const int sensorTxPin = 3;
+const int sensorRxPin = 14;
+const int sensorTxPin = 12;
 SoftwareSerial pmSerial(sensorRxPin, sensorTxPin);
 
 Adafruit_PM25AQI aqi = Adafruit_PM25AQI();
