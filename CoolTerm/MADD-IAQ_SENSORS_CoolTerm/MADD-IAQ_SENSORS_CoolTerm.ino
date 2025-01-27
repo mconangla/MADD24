@@ -1,7 +1,7 @@
 ////// Program Control //////
 bool Monitor_PM25 = true; //set to to true or false to enable or disable PM values through serial
 bool Monitor_SCD41 = true; //set to to true or false to enable or disable CO2+TEMP+HUM values through serial
-bool Monitor_log = false; //set to to true or false to enable or disable WiFi+ThingSpeak details through serial
+bool Monitor_log = false; //set to to true or false to enable or disable sensor information through serial
 
 ////// Time controller //////
 unsigned long previousMillis = 0;
@@ -10,7 +10,7 @@ unsigned long interval = 10000;
 ///// PM25 Libraries ///// - Adafruit PM25 AQI
 #include "Adafruit_PM25AQI.h"
 #include <SoftwareSerial.h>
-SoftwareSerial pmSerial(14, 12);
+SoftwareSerial pmSerial(D4, D3);
 Adafruit_PM25AQI aqi = Adafruit_PM25AQI();
 PM25_AQI_Data data;
 

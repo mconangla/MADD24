@@ -1,9 +1,9 @@
 String ValuesCache, ValuesRecord;
 ////// Program Control //////
-bool Monitor_Time = false;
-bool Monitor_PM25 = false;
-bool Monitor_SCD41 = false;
-bool Monitor_SDCard = false;
+bool Monitor_Time = true;
+bool Monitor_PM25 = true;
+bool Monitor_SCD41 = true;
+bool Monitor_SDCard = true;
 bool Monitor_log = false;
 
 ////// Time controller //////
@@ -22,7 +22,7 @@ SCD4x mySensor;
 ////// PM25 Libraries ////// - Adafruit PM25 AQI
 #include "Adafruit_PM25AQI.h"
 #include <SoftwareSerial.h>
-SoftwareSerial pmSerial(14, 12);
+SoftwareSerial pmSerial(D4, D3);
 Adafruit_PM25AQI aqi = Adafruit_PM25AQI();
 
 ////// SDCard Libraries //////
@@ -80,8 +80,8 @@ void readTime() {
   DateTime time = rtc.now();
 
   if (Monitor_Time) {
+    Serial.println(F("---------------------------------------"));
     Serial.println(String("DateTime:\t") + time.timestamp(DateTime::TIMESTAMP_FULL));
-    Serial.println("\n");
   }
 
   //Save the time value to variable
@@ -99,8 +99,6 @@ void readPM25() {
     delay(500);
   }
   if (Monitor_PM25) {
-
-    Serial.println(F("---------------------------------------"));
     Serial.print(F("PM 1.0: "));
     Serial.print(data.pm10_standard);
     Serial.print(F("\t\tPM 2.5: "));
@@ -141,7 +139,6 @@ void readSCD41() {
 
 void record_SD() {
 
-
   if (!SD.begin(chipSelect)) {
     Serial.println("SD initialization failed!");
     return;
@@ -157,7 +154,7 @@ void record_SD() {
 
 
     if (Monitor_PM25) {
-      Serial.print("Writing to data.csv...");
+      Serial.println("Writing to data.csv...");
     }
 
     myFile.println(ValuesCache);
@@ -171,21 +168,16 @@ void record_SD() {
 }
 
 void loop() {
-
-
-
   ////// Time controller //////
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
 
     ValuesCache = "";
-
-    readTime();
-    readPM25();
-    readSCD41();
-    record_SD();
-
-    Serial.println(String("Valuecache: ") + ValuesCache);
+    readTime();    // 1) Print date/time first
+    readPM25();    // 2) Print PM2.5 readings
+    readSCD41();   // 3) Print CO2/Temp/Humidity
+    record_SD();   // 4) Write to SD card
+    Serial.println(String("Valuecache: ") + ValuesCache); //5) print final line
   }
 }
