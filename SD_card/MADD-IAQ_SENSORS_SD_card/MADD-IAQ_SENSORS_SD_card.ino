@@ -8,7 +8,7 @@ bool Monitor_log = false;
 
 ////// Time controller //////
 unsigned long previousMillis = 0;
-const long interval = 10000;
+const long interval = 30000;
 
 ////// Clock Libraries //////
 #include "RTClib.h"
