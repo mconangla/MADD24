@@ -35,8 +35,6 @@ WiFiClient  client;
 unsigned long myChannelNumber = YOUR_CHANNEL_NUMBER_HERE;
 const char * myWriteAPIKey = "YOUR_WRITE_API_KEY_HERE";
 
-int number = 0;
-
 //// Log messages configuration /////
 void logMessage(const String& message, bool monitor) {
   if (monitor) {
@@ -46,8 +44,8 @@ void logMessage(const String& message, bool monitor) {
 
 void setup() {
   Serial.begin(115200);
-  // Wait one second for sensor to boot up!
-  delay(1000);
+
+  delay(1000); // Wait one second for sensor to boot up!
 
   setupPM25();
   setupSCD41();
@@ -66,19 +64,24 @@ void loop() {
 ////// PM25 Setup //////
 void setupPM25() {
   pmSerial.begin(9600);
-  if (!aqi.begin_UART(&pmSerial)) {  // connect to the sensor over software serial
+  if (!aqi.begin_UART(&pmSerial)) { // connect to the sensor over software serial
     logMessage("Could not find PM 2.5 sensor!", Monitor_log);
     while (1) delay(10);
+  } else {
+    logMessage("PM2.5 sensor initialization successful.", Monitor_log);
   }
 }
 
 ////// SCD41 Setup //////
 void setupSCD41() {
-  Wire.begin();
-  if (mySensor.begin() == false) {
+  // Initialize I2C on D2 (SDA) and D1 (SCL)
+  Wire.begin(D2, D1);
+
+  if (!mySensor.begin()) {
     logMessage("SCD41 Sensor not detected.", Monitor_log);
-    while (1)
-      ;
+    while (1);
+  } else {
+    logMessage("SCD41 sensor initialization successful.", Monitor_log);
   }
 }
 
@@ -163,10 +166,10 @@ void writeThingSpeak() {
   ThingSpeak.setField(5, data.pm25_standard);
   ThingSpeak.setField(6, data.pm100_standard);
   
-  // Write to ThingSpeak. There are up to 8 fields in a channel, allowing you to store up to 8 different
-  // pieces of information in a channel.  Here, we write to field 1.
+  // Write to ThingSpeak
   int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
 
+  // Log the result if Monitor_log is true
   if (Monitor_log) {
     // Print serial messages if Monitor_log is true
     if (x == 200) {

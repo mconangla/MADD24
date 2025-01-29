@@ -51,7 +51,7 @@ void logMessage(const String& message, bool monitor) {
 void setup() {
   Serial.begin(115200);
 
-  delay(1000);// Wait one second for sensor to boot up!
+  delay(1000); // Wait one second for sensor to boot up!
 
   setupPM25();
   setupSCD41();
@@ -71,8 +71,7 @@ void loop() {
 ////// PM25 Setup //////
 void setupPM25() {
   pmSerial.begin(9600);
-  if (!aqi.begin_UART(&pmSerial)) {
-    // Print debug/log message only if Monitor_log is true
+  if (!aqi.begin_UART(&pmSerial)) { // connect to the sensor over software serial
     logMessage("Could not find PM 2.5 sensor!", Monitor_log);
     while (1) delay(10);
   } else {
