@@ -33,8 +33,8 @@ File myFile;
 
 void setup() {
   Serial.begin(115200);
-  // Wait one second for sensor to boot up!
-  delay(1000);
+  // Wait three seconds for sensor to boot up!
+  delay(3000);
 
   ////// Clock Setup //////
 #ifndef ESP8266
