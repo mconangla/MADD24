@@ -97,15 +97,15 @@ void setup() {
     Serial.println("SD initialization done.");
   }
 
-  // If data.csv does not exist, create and add a header row
-  if (!SD.exists("data.csv")) {
-    myFile = SD.open("data.csv", FILE_WRITE);
+  // If IAQ-light_data.csv does not exist, create and add a header row
+  if (!SD.exists("IAQ-light_data.csv")) {
+    myFile = SD.open("IAQ-light_data.csv", FILE_WRITE);
     if (myFile) {
       // Added "Light" column to the header
       myFile.println("Line,PM1.0,PM2.5,PM10,CO2,Temperature,Humidity,Light");
       myFile.close();
       if (Monitor_SDCard) {
-        Serial.println("Created data.csv and wrote header.");
+        Serial.println("Created IAQ-light_data.csv and wrote header.");
       }
     }
   }
@@ -190,23 +190,23 @@ void readBH1750() {
 // --------------------- Write to SD -------------------------
 void record_SD() {
   // Open in append mode
-  myFile = SD.open("data.csv", FILE_WRITE);
+  myFile = SD.open("IAQ-light_data.csv", FILE_WRITE);
   if (myFile) {
     if (Monitor_SDCard) {
-      Serial.println("Writing to data.csv...");
+      Serial.println("Writing to IAQ-light_data.csv...");
     }
     // Prepend line number to the CSV row
     myFile.println(String(lineNumber) + "," + ValuesCache);
     myFile.close();
 
     if (Monitor_SDCard) {
-      Serial.println("Data recorded to data.csv");
+      Serial.println("Data recorded to IAQ-light_data.csv");
     }
     // Increment for the next reading
     lineNumber++;
   } else {
     if (Monitor_SDCard) {
-      Serial.println("Error opening data.csv");
+      Serial.println("Error opening IAQ-light_data.csv");
     }
   }
 }
