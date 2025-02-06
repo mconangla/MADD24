@@ -21,7 +21,7 @@ void setup() {
 
   Serial.println("Adafruit PMSA003I Air Quality Sensor");
 
-  // Wait one second for sensor to boot up!
+  // Wait three seconds for sensor to boot up!
   delay(3000);
 
   // If using serial, initialize it and set baudrate before starting!
