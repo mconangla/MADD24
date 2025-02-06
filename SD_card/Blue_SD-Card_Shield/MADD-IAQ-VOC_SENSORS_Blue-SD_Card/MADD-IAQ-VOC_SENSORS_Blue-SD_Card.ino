@@ -145,9 +145,9 @@ void readPM25() {
   }
 
   // Prepare CSV portion
-  ValuesCache += String(data.pm10_standard)  + ",";
-  ValuesCache += String(data.pm25_standard)  + ",";
-  ValuesCache += String(data.pm100_standard) + ",";
+  ValuesCache += String(data.pm10_standard);
+  ValuesCache += "," + String(data.pm25_standard);
+  ValuesCache += "," + String(data.pm100_standard);
 }
 
 // --------------------- Read SCD41 ---------------------------
@@ -171,9 +171,9 @@ void readSCD41() {
   }
 
   // Append SCD41 data
-  ValuesCache += String(mySensor.getCO2())            + ",";
-  ValuesCache += String(mySensor.getTemperature(), 1) + ",";
-  ValuesCache += String(mySensor.getHumidity(), 1)    + ",";
+  ValuesCache += "," + String(mySensor.getCO2());
+  ValuesCache += "," + String(mySensor.getTemperature(), 1);
+  ValuesCache += "," + String(mySensor.getHumidity(), 1);
 }
 
 // --------------------- Read SGP30 ---------------------------
@@ -196,9 +196,9 @@ void readSGP30() {
   // (Column 1) TVOC in ppb
   // (Column 2) TVOC in mg/m3
   // (Column 3) TVOC in µg/m3
-  ValuesCache += String(mySGP30.TVOC)                + ",";
-  ValuesCache += String(mySGP30.TVOC * 0.0045, 4)    + ",";
-  ValuesCache += String(mySGP30.TVOC * 4.5, 1);
+  ValuesCache += "," + String(mySGP30.TVOC);
+  ValuesCache += "," + String(mySGP30.TVOC * 0.0045, 4);
+  ValuesCache += "," + String(mySGP30.TVOC * 4.5, 1);
 }
 
 // --------------------- Write to SD --------------------------

@@ -1,11 +1,12 @@
 /****************************************
  *             Debug Flags
  ****************************************/
-bool Monitor_Time   = true;
-bool Monitor_PM25   = true;
-bool Monitor_SCD41  = true;
-bool Monitor_SDCard = true;
-bool Monitor_log    = true;
+bool Monitor_Time   = true;  // RTC prints
+bool Monitor_PM25   = true;  // PM2.5 sensor prints
+bool Monitor_SCD41  = true;  // SCD41 sensor prints
+bool Monitor_SDCard = true;  // SD card prints
+bool Monitor_log    = true;  // General/logging prints
+bool Monitor_BH1750 = true;  // BH1750 sensor prints
 
 /****************************************
  *           Libraries & Objects
@@ -18,6 +19,7 @@ bool Monitor_log    = true;
 #include <SoftwareSerial.h>        // For PM2.5 sensor
 #include <SPI.h>                   // SD
 #include <SD.h>                    // SD
+#include <BH1750.h>                // BH1750 Light Sensor
 
 /****************************************
  *           Global Variables
@@ -26,9 +28,6 @@ String ValuesCache;           // Where readings for one line are built
 unsigned long previousMillis = 0;
 const long interval = 20000;  // 20 seconds
 
-/****************************************
- *           Pin Definitions
- ****************************************/
 // For the Wemos D1 mini SD shield, CS is typically D8
 const int chipSelect = D8;
 
@@ -40,6 +39,9 @@ SCD4x mySensor;      // SCD41 object
 
 // Real Time Clock
 RTC_DS1307 rtc;
+
+// BH1750 Light Sensor
+BH1750 lightMeter; 
 
 // SD card file handle
 File myFile;
@@ -100,6 +102,22 @@ void setup() {
     Serial.println("SCD41 initialization successful.");
   }
 
+  // ------------------ BH1750 Setup ------------------
+  if (Monitor_BH1750) {
+    Serial.println("Initializing BH1750...");
+  }
+  if (lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE)) {
+    if (Monitor_BH1750) {
+      Serial.println("BH1750 initialization successful.");
+    }
+  } else {
+    if (Monitor_BH1750) {
+      Serial.println("Error initializing BH1750!");
+    }
+    // Stop here if BH1750 sensor not found
+    while (1) { delay(10); }
+  }
+
   // --------------------- SD Card Setup --------------------
   if (Monitor_SDCard) {
     Serial.print("Initializing SD card... ");
@@ -114,22 +132,22 @@ void setup() {
   }
 
   // If data.csv does not exist, create it and add a header row
-  if (!SD.exists("Time-IAQ_data.csv")) {
-    myFile = SD.open("Time-IAQ_data.csv", FILE_WRITE);
+  if (!SD.exists("Time-IAQ-light_data.csv")) {
+    myFile = SD.open("Time-IAQ-light_data.csv", FILE_WRITE);
     if (myFile) {
-      // Customize your header as needed:
-      myFile.println("DateTime,PM1.0,PM2.5,PM10,CO2,Temperature,Humidity");
+      // Add a new column for Light in the header
+      myFile.println("DateTime,PM1.0,PM2.5,PM10,CO2,Temperature,Humidity,Light(Lux)");
       myFile.close();
       if (Monitor_SDCard) {
-        Serial.println("Created Time-IAQ_data.csv and wrote header.");
+        Serial.println("Created Time-IAQ-light_data.csv and wrote header.");
       }
     } else {
-      Serial.println("Error creating Time-IAQ_data.csv");
+      Serial.println("Error creating Time-IAQ-light_data.csv");
     }
   }
 }
 
-// ------------------ Time Setup ------------------
+// ------------------ Time Reading ------------------
 void readTime() {
   // Read RTC time
   DateTime time = rtc.now();
@@ -142,7 +160,7 @@ void readTime() {
   ValuesCache = time.timestamp(DateTime::TIMESTAMP_FULL);
 }
 
-  // ------------------ PM2.5 Setup ------------------
+// ------------------ PM2.5 Reading ------------------
 void readPM25() {
   PM25_AQI_Data data;
 
@@ -169,7 +187,7 @@ void readPM25() {
   ValuesCache += "," + String(data.pm100_standard);
 }
 
-  // ------------------ SCD41 Setup ------------------
+// ------------------ SCD41 Reading ------------------
 void readSCD41() {
   // Wait until we get valid data
   while (mySensor.readMeasurement() == 0) {
@@ -194,20 +212,42 @@ void readSCD41() {
   ValuesCache += "," + String(mySensor.getHumidity(), 1);
 }
 
-// ------------------ SD Card Setup ----------------
+// --------------------- Read BH1750 -------------------------
+void readBH1750() {
+  float lux = lightMeter.readLightLevel();
+
+  // Check if reading is valid
+  if (lux < 0) {
+    if (Monitor_BH1750) {
+      Serial.println("Error reading BH1750 light level!");
+    }
+    // Append "N/A" or similar if invalid
+    ValuesCache += "N/A";
+  } else {
+    if (Monitor_BH1750) {
+      Serial.print("Light Level: ");
+      Serial.print(lux);
+      Serial.println(" lux");
+    }
+    // Append BH1750 data
+    ValuesCache += "," + String(lux, 2); // 2 decimal places
+  }
+}
+
+// ------------------ SD Card Write ------------------
 void record_SD() {
   // Open the file for appending
-  myFile = SD.open("Time-IAQ_data.csv", FILE_WRITE);
+  myFile = SD.open("Time-IAQ-light_data.csv", FILE_WRITE);
   if (myFile) {
-    if (Monitor_PM25) {
-      Serial.println("Writing to Time-IAQ_data.csv...");
+    if (Monitor_log) {
+      Serial.println("Writing to Time-IAQ-light_data.csv...");
     }
     // Write the entire CSV line to the file
     myFile.println(ValuesCache);
     // Close the file
     myFile.close();
   } else {
-    Serial.println("Error opening Time-IAQ_data.csv");
+    Serial.println("Error opening Time-IAQ-light_data.csv");
   }
 }
 
@@ -230,7 +270,9 @@ void loop() {
     readPM25();
     // 3) Read SCD41 (CO2, temp, humidity)
     readSCD41();
-    // 4) Write it all to SD
+    // 4) Read BH1750 light sensor
+    readBH1750();
+    // 5) Write it all to SD
     record_SD();
 
     // Debug print final line

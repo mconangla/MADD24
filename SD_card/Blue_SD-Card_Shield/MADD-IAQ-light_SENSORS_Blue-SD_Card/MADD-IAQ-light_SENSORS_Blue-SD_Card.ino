@@ -145,9 +145,9 @@ void readPM25() {
   }
 
   // Prepare CSV portion
-  ValuesCache += String(data.pm10_standard)  + ",";
-  ValuesCache += String(data.pm25_standard)  + ",";
-  ValuesCache += String(data.pm100_standard) + ",";
+  ValuesCache += String(data.pm10_standard);
+  ValuesCache += "," + String(data.pm25_standard);
+  ValuesCache += "," + String(data.pm100_standard);
 }
 
 // --------------------- Read SCD41 --------------------------
@@ -171,9 +171,9 @@ void readSCD41() {
   }
 
   // Append SCD41 data
-  ValuesCache += String(mySensor.getCO2())            + ",";
-  ValuesCache += String(mySensor.getTemperature(), 1) + ",";
-  ValuesCache += String(mySensor.getHumidity(), 1)    + ",";
+  ValuesCache += "," + String(mySensor.getCO2());
+  ValuesCache += "," + String(mySensor.getTemperature(), 1);
+  ValuesCache += "," + String(mySensor.getHumidity(), 1);
 }
 
 // --------------------- Read BH1750 -------------------------
@@ -194,7 +194,7 @@ void readBH1750() {
       Serial.println(" lux");
     }
     // Append BH1750 data
-    ValuesCache += String(lux, 2); // 2 decimal places
+    ValuesCache += "," + String(lux, 2); // 2 decimal places
   }
 }
 
