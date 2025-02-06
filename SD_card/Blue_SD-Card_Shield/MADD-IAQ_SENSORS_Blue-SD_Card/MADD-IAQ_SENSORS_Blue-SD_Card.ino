@@ -1,5 +1,18 @@
+/****************************************
+ *             Debug Flags
+ ****************************************/
+bool Monitor_PM25   = true;  // PM2.5 sensor prints
+bool Monitor_SCD41  = true;  // SCD41 sensor prints
+bool Monitor_SDCard = true;  // SD card prints
+bool Monitor_log    = true;  // General/logging prints
+
+/****************************************
+ *           Libraries & Objects
+ ****************************************/
 #include <Arduino.h>
 #include <Wire.h>
+
+// SD Libraries
 #include <SPI.h>
 #include <SD.h>
 
@@ -10,8 +23,9 @@
 // SCD41 Libraries
 #include "SparkFun_SCD4x_Arduino_Library.h"
 
-// ---------------------- SD Configuration ----------------------
-
+/****************************************
+ *           Global Variables
+ ****************************************/
 const int chipSelect = D8; // For the Wemos D1 mini SD shield, CS is typically D8: 
 const long interval  = 20000; // logging interval, change it if you need a different loggin value (in miliseconds)
 
@@ -21,18 +35,14 @@ Adafruit_PM25AQI aqi = Adafruit_PM25AQI();
 SCD4x mySensor;
 File myFile;
 
-// ---------------------- Variables & Flags ------------------
 unsigned long previousMillis = 0;
 String ValuesCache;
 int lineNumber = 1; // Resets to number 1 on every power-up/reset
 
-// Debug flags
-bool Monitor_PM25   = true;  // PM2.5 sensor prints
-bool Monitor_SCD41  = true;  // SCD41 sensor prints
-bool Monitor_SDCard = true;  // SD card prints
-bool Monitor_log    = true;  // General/logging prints
 
-// ------------------------- Setup ---------------------------
+/****************************************
+ *                Setup
+ ****************************************/
 void setup() {
   Serial.begin(115200);
   delay(3000);
@@ -168,7 +178,9 @@ void record_SD() {
   }
 }
 
-// ------------------------- Loop ----------------------------
+/****************************************
+ *                Loop
+ ****************************************/
 void loop() {
   unsigned long currentMillis = millis();
 
